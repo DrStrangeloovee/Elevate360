@@ -1,0 +1,4 @@
+name: Issue
+description: General issue to be implemented.
+labels: ["todo"]
+projects: ["DrStrangeloovee/projects/2"]
