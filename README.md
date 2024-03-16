@@ -1,38 +1,39 @@
-# create-svelte
+# Elevate360
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+ITP (SS24) project by:
+- [Radwan Mariam](mailto:if23b023@technikum-wien.at) - Project lead  
+- [Ahmed Hagar](mailto:if23b004@technikum-wien.at)
+- [Auenhammer Marco](mailto:if23b501@technikum-wien.at)
+- [Taher Imad](mailto:if22b016@technikum-wien.at)
+- [Müllner Nick](mailto:if23b503@technikum-wien.at)
 
-## Creating a project
+## Development
 
-If you're seeing this, you've probably already done this step. Congrats!
+First make sure you satisfy the prerequisites:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- Install [pnpm](https://pnpm.io/installation)
+    - Setup the default Node.js runtime on your system by [running](https://pnpm.io/cli/env): `pnpm env use --global latest`
+      This will set the latest version to be the default on your system. Check if everything was succesful by running `ǹode -v` - you should see a version output.
+- Download the appropriate PocketBase binary from [here](https://pocketbase.io/docs/) and move it to the root of the repository (it should be on the same level as the `README.md` and `package.json` file).
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+To get started with development you need to do the following:
+1. Run `pnpm install` in the same folder as the `package.json` file. This will install all the dependencies and prepare everything needed for development. Note: You need to run `pnpm install` again if there is a dependency you are missing!
+2. First start the PocketBase back end with `pocketbase -serve` from your shell. This should print the an URL where you can access the resources needed. Normally this should be:
+    - REST API: http://127.0.0.1:8090/api/
+    - Admin UI: http://127.0.0.1:8090/_/
+3. In a separate shell we will start the front end with `pnpm dev`. Again this will print an URL from which you can access the actual application:
+    - http://localhost:5173/
+4. Now anything you develop will be instantly reflected in your browser by being automatically reloaded.
+5. Develop!
 
-## Developing
+## PocketBase
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+PocketBase is our back end which comes in a single binary. The two folders `pb_data` and `pb_migrations` are going to be created and important because that is our actual application data.
 
-```bash
-npm run dev
+## `pg_migrations`
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+PocketBase uses migrations this means that the whole database is modeled with files (located in `pg_migrations`) an therefore it can be programmed. It simply runs SQL commands on the database (using the PocketBase API) which makes it possible to check it into the Git repository. Now everybody automatically has the same data and this makes it very easy to collaborate. By default an admin account is created to manage the backend you can find out its credentials by checking the appropriate migration file (`1710628388_create_default_admin_account.js`) for it and get an idea how it works. See the PocketBase [documentation](https://pocketbase.io/docs/js-migrations/) for more information.
 
-## Building
+### `pb_data`
 
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+This is where the actual data is stored i.e. the database - PocketBase uses SQLite to store its data. Because of the migrations we don't have to care about this folder in any other way. It isn't tracked by Git either as we can always use the migrations to recreate the exact same database from them.
