@@ -32,7 +32,8 @@ PocketBase is our back end which comes in a single binary. The two folders `pb_d
 
 ## `pg_migrations`
 
-PocketBase uses migrations this means that the whole database is modeled with files (located in `pg_migrations`) an therefore it can be programmed. It simply runs SQL commands on the database (using the PocketBase API) which makes it possible to check it into the Git repository. Now everybody automatically has the same data and this makes it very easy to collaborate. By default an admin account is created to manage the backend you can find out its credentials by checking the appropriate migration file (`1710628388_create_default_admin_account.js`) for it and get an idea how it works. See the PocketBase [documentation](https://pocketbase.io/docs/js-migrations/) for more information.
+PocketBase uses migrations this means that the whole database is modeled with files (located in `pg_migrations`) an therefore it can be programmed. It simply runs SQL commands on the database (using the PocketBase API) which makes it possible to check it into the Git repository. Now everybody automatically has the same data and this makes it very easy to collaborate. By default an admin account is created to manage the backend you can find out its credentials by checking the appropriate migration file (`1710628388_create_default_admin_account.js`) for it and get an idea how it works. Additionally every project member has an account see the `1710633905_default_users.js` for futher information.
+See the PocketBase [documentation](https://pocketbase.io/docs/js-migrations/) for more information.
 
 ### `pb_data`
 
