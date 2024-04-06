@@ -18,7 +18,7 @@ First make sure you satisfy the prerequisites:
 
 To get started with development you need to do the following:
 1. Run `pnpm install` in the same folder as the `package.json` file. This will install all the dependencies and prepare everything needed for development. Note: You need to run `pnpm install` again if there is a dependency you are missing!
-2. First start the PocketBase back end with `pocketbase -serve` from your shell. This should print the an URL where you can access the resources needed. Normally this should be:
+2. First start the PocketBase back end with `pocketbase serve` from your shell. This should print the an URL where you can access the resources needed. Normally this should be:
     - REST API: http://127.0.0.1:8090/api/
     - Admin UI: http://127.0.0.1:8090/_/
 3. In a separate shell we will start the front end with `pnpm dev`. Again this will print an URL from which you can access the actual application:
