@@ -38,3 +38,18 @@ See the PocketBase [documentation](https://pocketbase.io/docs/js-migrations/) fo
 ### `pb_data`
 
 This is where the actual data is stored i.e. the database - PocketBase uses SQLite to store its data. Because of the migrations we don't have to care about this folder in any other way. It isn't tracked by Git either as we can always use the migrations to recreate the exact same database from them.
+
+
+
+### `todos` record initialisation
+1- Access the Admin UI: Navigate to http://127.0.0.1:8090/_/.
+
+2- Create a Collection:
+* Click on "Collections" in the sidebar.
+* Click "New Collection", name it todos.
+* Add fields such as title (text), description (text), complete (boolean), userId (relation many), and sharedWith (relation many).
+
+3- Set Collection Rules:
+* This configuration ensures that any authenticated user can perform these actions.
+
+![img.png](img.png)
