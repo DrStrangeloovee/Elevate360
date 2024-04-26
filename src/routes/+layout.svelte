@@ -23,16 +23,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="notes">Notes</a>
+                    <a class="nav-link" href="/notes">Notes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="calender">Calender</a>
+                    <a class="nav-link" href="/calender">Calender</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="todo">To-Dos</a>
+                    <a class="nav-link" href="/todos">To-Dos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="tracker">Tracker</a>
+                    <a class="nav-link" href="/tracker">Tracker</a>
                 </li>
             </ul>
             <form class="d-flex" role="search">
@@ -44,15 +44,15 @@
                 />
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-            <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="user" id="navbarDropdown" role="button"
+            <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button"
                data-mdb-toggle="dropdown" aria-expanded="false"> <i class="fas fa-user mx-1"></i> Profile </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li>
-                    <a class="dropdown-item" href="#">My account</a>
+                    <a class="dropdown-item" href="/user">My account</a>
                 </li>
 
                 <li>
-                    <a class="dropdown-item" href="#">Log out</a>
+                    <a class="dropdown-item" href="/user/logout">Log out</a>
                 </li>
             </ul>
         </div>
