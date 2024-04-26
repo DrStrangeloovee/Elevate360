@@ -2,6 +2,16 @@
     // Import our custom CSS
     import '../styles.scss';
     // Import all of Bootstrap's JS
+    //import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+    import { onMount } from 'svelte';
+
+    onMount(() => {
+        // Initialize all tooltip elements
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        const dropdownList = dropdownElementList.map(dropdownToggleEl => new bootstrap.Dropdown(dropdownToggleEl));
+    });
+
 </script>
 
 <nav class="navbar navbar-expand-md bg-body-tertiary">
