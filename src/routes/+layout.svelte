@@ -1,7 +1,6 @@
 <script>
     // Import our custom CSS
     import '../styles.scss';
-    // Import all of Bootstrap's JS
 </script>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
