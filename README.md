@@ -14,7 +14,7 @@ First make sure you satisfy the prerequisites:
 - Install [pnpm](https://pnpm.io/installation)
     - Setup the default Node.js runtime on your system by [running](https://pnpm.io/cli/env): `pnpm env use --global latest`
       This will set the latest version to be the default on your system. Check if everything was succesful by running `ǹode -v` - you should see a version output.
-- Download the appropriate PocketBase binary from [here](https://pocketbase.io/docs/) and move it to the root of the repository (it should be on the same level as the `README.md` and `package.json` file).
+- Download the appropriate PocketBase binary from [here](https://pocketbase.io/docs/) and move it to the `./pocketbase` folder.
 
 To get started with development you need to do the following:
 1. Run `pnpm install` in the same folder as the `package.json` file. This will install all the dependencies and prepare everything needed for development. Note: You need to run `pnpm install` again if there is a dependency you are missing!
