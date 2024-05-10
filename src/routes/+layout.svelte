@@ -6,7 +6,7 @@
     let loggedIn = true;
 </script>
 
-<div class="row">
+<div class="row mb-5">
     <header
         class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between border-bottom px-2"
     >
