@@ -66,9 +66,7 @@
 </div>
 
 <div class="row">
-    <div class="col">
-        <slot />
-    </div>
+    <slot />
 </div>
 
 <!-- <div class="row flex-nowrap">
