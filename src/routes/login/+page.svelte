@@ -1,10 +1,5 @@
 <script>
-    let { form, data } = $props();
-
-    // TODO: make use of form & data vars
-    $effect(() => {
-        console.log(form, data);
-    });
+    let { form } = $props();
 </script>
 
 <div class="row justify-content-center">
@@ -12,7 +7,7 @@
         <p>{form.message}</p>
     {/if}
     <div class="col-3">
-        <form method="POST" action="?/register" class="border rounded p-3 mb-3">
+        <form method="POST" action="?/login" class="border rounded p-3 mb-3">
             <div class="text-center mb-3">
                 <h1>Login</h1>
                 <small class="text-body-secondary"
@@ -33,7 +28,7 @@
                     required
                 />
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </div>
 </div>
