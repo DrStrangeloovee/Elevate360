@@ -48,7 +48,9 @@
                 </li>
             </ul>
             <div class="col-md-3 text-end">
-                <button type="button" class="btn btn-danger">Logout</button>
+                <form action="/logout" method="POST">
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
             </div>
         {:else}
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 text-center">
