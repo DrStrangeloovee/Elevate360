@@ -2,8 +2,7 @@
     // Import our custom CSS
     import '../styles.scss';
 
-    // TODO: this should be implemented correclty after user auth is done
-    let loggedIn = true;
+    let { data } = $props();
 </script>
 
 <div class="row mb-5">
@@ -15,7 +14,7 @@
                 Elevate360 Logo
             </a>
         </div>
-        {#if loggedIn}
+        {#if data.user}
             <ul class="nav col-9 col-md-auto mb-2 justify-content-center mb-md-0 text-center">
                 <li class="nav-item px-2">
                     <a class="nav-link" href="/">
