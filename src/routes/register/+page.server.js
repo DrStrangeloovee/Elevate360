@@ -4,34 +4,20 @@ import { fail, redirect } from "@sveltejs/kit";
 export const actions = {
     register: async ({ locals, request }) => {
         const formData = Object.fromEntries(await request.formData());
-        console.log(typeof formData, formData);
-
-        // const data = {
-        //     username: "test_username",
-        //     email: "test@example.com",
-        //     emailVisibility: true,
-        //     password: "12345678",
-        //     passwordConfirm: "12345678",
-        //     name: "test"
-        // };
 
         try {
-            const newUser = await locals.pb.collection("users").create(formData);
-
-            // await locals.pb.users.authViaEmail(formData.email, formData.password);
+            await locals.pb.collection("users").create(formData);
 
             locals.pb.authStore.clear();
-        } catch (error) {
-            console.log(error);
-            console.log(error.response);
-            //throw Error(500, "Something went wrong");
+        } catch (ex) {
+            console.log(ex);
 
             return fail(422, {
                 error: true,
-                message: JSON.stringify(error)
+                message: JSON.stringify(ex)
             });
         }
 
-        throw redirect(303, "/login");
+        redirect(303, "/login");
     }
 };
