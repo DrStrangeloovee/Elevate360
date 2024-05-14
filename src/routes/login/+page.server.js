@@ -24,6 +24,6 @@ export const actions = {
             error(500, 'Something went wrong logging in')
         }
 
-        redirect(303, '/');
+        redirect(303, '/home');
     },
 }
