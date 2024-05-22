@@ -8,8 +8,7 @@
     });
 </script>
 
-<div class="col-8 offset-2">
+<div class="col-4 offset-2">
     <NoteList notes={data.notes}></NoteList>
-    <h1>Note name</h1>
     <!--<EditorJs></EditorJs>-->
 </div>
