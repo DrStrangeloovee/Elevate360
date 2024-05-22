@@ -5,9 +5,7 @@
 <div class="card">
     <h5 class="card-header">
         Your notes
-        <div class="float-end">
-            <span class="badge text-bg-secondary">{notes.length}</span>
-        </div>
+        <span class="badge text-bg-secondary float-end">{notes.length}</span>
     </h5>
     <div class="card-body">
         <a href="#" class="btn btn-primary"
