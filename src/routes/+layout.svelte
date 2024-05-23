@@ -17,7 +17,7 @@
         {#if data.user}
             <ul class="nav col-9 col-md-auto mb-2 justify-content-center mb-md-0 text-center">
                 <li class="nav-item px-2">
-                    <a class="nav-link" href="/">
+                    <a class="nav-link" href="/home">
                         <i class="bi bi-house d-block mx-auto"></i>
                         Home
                     </a>
@@ -54,13 +54,13 @@
             </div>
         {:else}
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 text-center">
-                <li><a href="#" class="nav-link px-2">Home</a></li>
-                <li><a href="#" class="nav-link px-2">Features</a></li>
-                <li><a href="#" class="nav-link px-2">About</a></li>
+                <li><a href="/" class="nav-link px-2">Start</a></li>
+                <li><a href="/features" class="nav-link px-2">Features</a></li>
+                <li><a href="/about" class="nav-link px-2">About</a></li>
             </ul>
             <div class="col-md-3 text-end">
-                <button type="button" class="btn btn-outline-primary me-2">Login</button>
-                <button type="button" class="btn btn-primary">Sign-up</button>
+                <a href="/login" class="btn btn-primary m-2">Login </a>
+                <a href="/register" class="btn btn-primary m-2">Register </a>
             </div>
         {/if}
     </header>

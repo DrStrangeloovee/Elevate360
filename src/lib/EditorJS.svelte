@@ -1,19 +1,20 @@
 <script>
-    import Checklist from '@editorjs/checklist';
     import EditorJS from '@editorjs/editorjs';
+    import Checklist from '@editorjs/checklist';
     import Header from '@editorjs/header';
     import ImageTool from '@editorjs/image';
     import LinkTool from '@editorjs/link';
     import List from '@editorjs/list';
     import Paragraph from '@editorjs/paragraph';
 
-    let editorJsNode;
+    let { content = {} } = $props();
 
-    $effect(() => {
+    function editorjs(node) {
         const editor = new EditorJS({
+            holder: node,
             autofocus: true,
-            holder: editorJsNode,
             inlineToolbar: true,
+            // Initialize tools
             tools: {
                 paragraph: {
                     class: Paragraph,
@@ -52,9 +53,28 @@
                         // TODO: implement endpoint: 'http://localhost:8008/fetchUrl' // Your backend endpoint for url data fetching,
                     }
                 }
-            }
+            },
+            // Render note contents
+            data: content
         });
-    });
+
+        // Initialize conent when ready
+        /* TODO: check if needed
+        editor.isReady
+            .then(() => {
+                editor.render(content);
+            })
+            .catch((ex) => {
+                console.log('ERROR:', ex);
+            });
+        */
+
+        // TODO: check if needed - otherwise remove whole return block as it is not necessary
+        return {
+            update() {},
+            destroy() {}
+        };
+    }
 </script>
 
-<div bind:this={editorJsNode} class="border"></div>
+<div class="border" use:editorjs></div>
