@@ -4,4 +4,4 @@
     let { data } = $props();
 </script>
 
-<EditorJS content={data.note.content}></EditorJS>
+<EditorJS noteData={data.note}></EditorJS>
