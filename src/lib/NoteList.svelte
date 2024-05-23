@@ -38,7 +38,7 @@
             </p>
         {/if}
         <hr />
-        <a href="#" class="btn btn-primary float-end"
+        <a href="/note/new" class="btn btn-primary float-end"
             ><i class="bi bi-file-earmark-plus border-end pe-2 me-1"></i> Create a new note
         </a>
     </div>
