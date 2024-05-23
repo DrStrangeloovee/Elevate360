@@ -8,7 +8,12 @@
     import Paragraph from '@editorjs/paragraph';
 
     const defaultNoteData = {
-        title: 'Test'
+        title: `My note from ${new Date().toLocaleDateString(undefined, {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })}`
     };
 
     let { noteData = defaultNoteData } = $props();
