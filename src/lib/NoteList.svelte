@@ -37,8 +37,9 @@
                 <small>You haven't created any notes yet!</small>
             </p>
         {/if}
-        <hr />
-        <a href="/note/new" class="btn btn-primary float-end"
+    </div>
+    <div class="card-footer text-body-secondary d-flex justify-content-end">
+        <a href="/note/new" class="btn btn-primary w-50"
             ><i class="bi bi-file-earmark-plus border-end pe-2 me-1"></i> Create a new note
         </a>
     </div>
