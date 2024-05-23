@@ -1,4 +1,6 @@
 <script>
+    import EditorJs from './EditorJS.svelte';
+
     let { notes } = $props();
 </script>
 
@@ -11,7 +13,7 @@
         {#if notes.length > 0}
             <ul class="list-group list-group-flush pt-3">
                 {#each notes as note, i}
-                    <a href="#" class="list-group-item list-group-item-action">
+                    <a href="/note?id={note.id}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h5>
                                 <strong>{i + 1}. </strong>
