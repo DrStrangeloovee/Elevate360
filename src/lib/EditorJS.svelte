@@ -77,4 +77,12 @@
     }
 </script>
 
-<div class="border" use:editorjs></div>
+<div class="col-8 offset-2">
+    <div class="card">
+        <div class="card-header text-center"><h4>Featured</h4></div>
+        <div class="card-body p-0">
+            <div use:editorjs></div>
+        </div>
+        <div class="card-footer text-body-secondary text-center">2 days ago</div>
+    </div>
+</div>
