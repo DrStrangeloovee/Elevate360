@@ -7,7 +7,25 @@
     import List from '@editorjs/list';
     import Paragraph from '@editorjs/paragraph';
 
-    let { content = {} } = $props();
+    const defaultNoteData = {
+        title: `My note from ${new Date().toLocaleDateString(undefined, {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })}`
+    };
+
+    let { noteData = defaultNoteData } = $props();
+
+    let isEditingTitle = $state(false);
+    let titleInputNode;
+
+    function handleTitleEdit(params) {
+        isEditingTitle = true;
+        titleInputNode.focus();
+        // TODO: handle saving of input
+    }
 
     function editorjs(node) {
         const editor = new EditorJS({
@@ -55,7 +73,7 @@
                 }
             },
             // Render note contents
-            data: content
+            data: noteData.content
         });
 
         // Initialize conent when ready
@@ -77,4 +95,43 @@
     }
 </script>
 
-<div class="border" use:editorjs></div>
+<div class="col-8 offset-2">
+    <div class="card">
+        <div class="card-header text-center pb-3">
+            <input
+                id="titleInput"
+                class="form-control form-control-lg"
+                class:visually-hidden={!isEditingTitle}
+                type="text"
+                bind:value={noteData.title}
+                bind:this={titleInputNode}
+                onblur={() => (isEditingTitle = false)}
+            />
+            <button
+                id="titleEditButton"
+                type="button"
+                class="btn btn-lg"
+                onclick={handleTitleEdit}
+                class:visually-hidden-focusable={isEditingTitle}>{noteData.title}</button
+            >
+        </div>
+        <div class="card-body mt-1">
+            <div use:editorjs></div>
+        </div>
+        <div class="card-footer text-body-secondary text-center">2 days ago</div>
+    </div>
+</div>
+
+<style>
+    #titleInput {
+        text-align: center;
+    }
+
+    #titleEditButton {
+        transition: none;
+    }
+
+    #titleEditButton:active {
+        border: none;
+    }
+</style>
