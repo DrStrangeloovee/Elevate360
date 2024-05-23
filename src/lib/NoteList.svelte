@@ -1,6 +1,4 @@
 <script>
-    import EditorJs from './EditorJS.svelte';
-
     let { notes } = $props();
 </script>
 
