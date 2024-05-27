@@ -1,62 +1,72 @@
-<script>
-  let loggedIn = true;
+<script lang="ts">
+  import type { ITodo } from '$root/types/todo';
+  import AddTodo from './AddTodo.svelte';
+  import Todo from './Todo.svelte';
 
+  let todos: ITodo[] = [
+    { id: '1e4a59703af84', text: 'Todo 1', completed: true },
+    { id: '9e09bcd7b9349', text: 'Todo 2', completed: false },
+    { id: '9e4273a51a37c', text: 'Todo 3', completed: false },
+    { id: '53ae48bf605cc', text: 'Todo 4', completed: false },
+  ];
+
+  $: todosAmount = todos.length;
+
+  function generateRandomId(): string {
+    return Math.random().toString(16).slice(2);
+  }
+
+  function addTodo(event: CustomEvent<string>) {
+    const newTodo: ITodo = {
+      id: generateRandomId(),
+      text: event.detail,
+      completed: false,
+    };
+    todos = [...todos, newTodo];
+  }
+
+  function completeTodo(id: string): void {
+    todos = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.completed = !todo.completed;
+      }
+      return todo;
+    });
+  }
+
+  function removeTodo(id: string): void {
+    todos = todos.filter((todo) => todo.id !== id);
+  }
+
+  function editTodo(id: string, newTodo: string): void {
+    let currentTodo = todos.findIndex((todo) => todo.id === id);
+    todos[currentTodo].text = newTodo;
+  }
 </script>
 
-<style>
-  /* CSS-Stile hier */
-  #todo-app {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-  }
+<main>
+  <h1 class="title">To-do's</h1>
 
-  h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
+  <section class="todos">
+    <AddTodo on:addTodo={addTodo} />
 
-  .task-item {
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    border-radius: 4px;
-  }
+    {#if todosAmount}
+      <ul class="todo-list">
+        {#each todos as todo (todo.id)}
+          <Todo {todo} {completeTodo} {removeTodo} {editTodo} />
+        {/each}
+      </ul>
 
-  #task-input {
-    display: flex;
-  }
+      <div class="actions">
+        <span class="todo-count">{todos.filter(todo => !todo.completed).length} left</span>
+        <div class="filters">
+          <button class="filter">All</button>
+          <button class="filter">Active</button>
+          <button class="filter">Completed</button>
+        </div>
+        <button class="clear-completed">Clear completed</button>
+      </div>
+    {/if}
+  </section>
+</main>
 
-  #new-task {
-    flex: 1;
-    padding: 8px;
-    border-radius: 4px 0 0 4px;
-    border: 1px solid #ccc;
-  }
-
-  #add-button {
-    padding: 8px 12px;
-    border-radius: 0 4px 4px 0;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
-</style>
-
-<div id="todo-app">
-  <h1>To-Do List</h1>
-  <div id="task-list">
-    {#each tasks as task}
-      <div class="task-item">{task}</div>
-    {/each}
-  </div>
-  <div id="task-input">
-    <input type="text" id="new-task" placeholder="Add a new task...">
-    <button on:click={addTask} id="add-button">Add Task</button>
-  </div>
-</div>
