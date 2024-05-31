@@ -5,7 +5,7 @@
     let { data } = $props();
 </script>
 
-<div class="row mb-5">
+<div class="row mb-5 bg-white" class:sticky-top={!data.user}>
     <header
         class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between border-bottom px-2"
     >
@@ -54,7 +54,7 @@
             </div>
         {:else}
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 text-center">
-                <li><a href="/" class="nav-link px-2">Start</a></li>
+                <li><a href="/#features" class="nav-link px-2">Start</a></li>
                 <li><a href="/features" class="nav-link px-2">Features</a></li>
                 <li><a href="/about" class="nav-link px-2">About</a></li>
             </ul>
