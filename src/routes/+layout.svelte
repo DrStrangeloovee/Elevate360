@@ -54,9 +54,9 @@
             </div>
         {:else}
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 text-center">
-                <li><a href="/#features" class="nav-link px-2">Start</a></li>
-                <li><a href="/features" class="nav-link px-2">Features</a></li>
-                <li><a href="/about" class="nav-link px-2">About</a></li>
+                <li><a href="/" class="nav-link px-2">Start</a></li>
+                <li><a href="/#features" class="nav-link px-2">Features</a></li>
+                <li><a href="/#about" class="nav-link px-2">About</a></li>
             </ul>
             <div class="col-md-3 text-end">
                 <a href="/login" class="btn btn-primary m-2">Login </a>
