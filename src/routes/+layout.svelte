@@ -1,7 +1,6 @@
 <script>
     // Import our custom CSS
     import '../styles.scss';
-    import '../lib/calendar.svelte';
 
     let { data } = $props();
 </script>
