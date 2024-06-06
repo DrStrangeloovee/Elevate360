@@ -1,5 +1,7 @@
 
 <script>
+  export let events = [];
+
   import { onMount } from 'svelte';
 
   // Funktion zum Erstellen eines Monatsnamens
@@ -7,8 +9,6 @@
     const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
     return months[month];
   }
-
-  export let events = [];
 
   let today = new Date(2024, 0); // Startdatum: Januar 2024
   let currentMonth = today.getMonth();
