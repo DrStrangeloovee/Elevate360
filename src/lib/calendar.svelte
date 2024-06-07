@@ -1,52 +1,62 @@
 
 <script>
-  export let events = [];
+  import { createContext, setContext, onMount } from 'svelte';
 
-  import { onMount } from 'svelte';
+  const myContext = createContext();
 
-  // Funktion zum Erstellen eines Monatsnamens
-  function getMonthName(month) {
-    const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-    return months[month];
-  }
+  export let initialEvents = [];
+  export let initialTasks = [];
 
   let today = new Date(2024, 0); // Startdatum: Januar 2024
   let currentMonth = today.getMonth();
   let currentYear = today.getFullYear();
 
-  let tasks = [];
+  let events = initialEvents;
+  let tasks = initialTasks;
 
-  // Funktion zum Hinzufügen einer Aufgabe
-  function addTask(dayIndex) {
-    const task = prompt("Bitte geben Sie die Aufgabe ein:");
-    if (task !== null && task !== "") {
-      tasks[dayIndex].push(task);
-    }
-  }
+  setContext(myContext, { events, tasks });
 
-  // Funktion zum Löschen einer Aufgabe
-  function deleteTask(dayIndex, taskIndex) {
-    tasks[dayIndex].splice(taskIndex, 1);
-  }
-
-  // Funktion zum Blättern zum nächsten Monat
   function nextMonth() {
     currentMonth = (currentMonth + 1) % 12;
-    if (currentMonth === 0) currentYear++; // Wenn Dezember, erhöhe das Jahr
+    if (currentMonth === 0) currentYear++;
+    updateCalendar();
   }
 
-  // Funktion zum Blättern zum vorherigen Monat
   function previousMonth() {
     currentMonth = (currentMonth - 1 + 12) % 12;
-    if (currentMonth === 11) currentYear--; // Wenn Januar, verringere das Jahr
+    if (currentMonth === 11) currentYear--;
+    updateCalendar();
   }
 
-  // Funktion zum Generieren des Kalenders für den aktuellen Monat und das aktuelle Jahr
-  function generateCalendar(month, year) {
-    let daysInMonth = new Date(year, month + 1, 0).getDate();
-    let startDay = new Date(year, month, 1).getDay();
+  function updateCalendar() {
+    setContext(myContext, { events, tasks });
+  }
 
-    let weeks = [];
+  function addTask(dayIndex) {
+    const task = prompt("Today's Task:");
+    if (task !== null && task !== "") {
+      tasks[dayIndex] = [...(tasks[dayIndex] || []), task];
+      updateCalendar();
+    }
+  }
+  addTask();
+
+  function deleteTask(dayIndex, taskIndex) {
+    tasks[dayIndex].splice(taskIndex, 1);
+    updateCalendar();
+  }
+  deleteTask();
+
+  onMount(() => {
+    updateCalendar();
+  });
+
+  function generateCalendar(month, year) {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const startDay = new Date(year, month, 1).getDay();
+
+
+    const weeks = [];
     let day = 1;
     for (let i = 0; i < (startDay > 0 ? 6 : 5); i++) {
       weeks[i] = [];
@@ -54,10 +64,7 @@
         if ((i === 0 && j < startDay) || day > daysInMonth) {
           weeks[i][j] = null;
         } else {
-          weeks[i][j] = {
-            date: day,
-            events: events.filter(e => e.date.getDate() === day && e.date.getMonth() === month && e.date.getFullYear() === year)
-          };
+          weeks[i][j] = day;
           day++;
         }
       }
@@ -65,63 +72,104 @@
     return weeks;
   }
 
-  // Beispielhafte Kalenderdaten
-  let calendarData = generateCalendar(currentMonth, currentYear);
+  generateCalendar();
 
-  onMount(() => {
-    // Initialisiere die Aufgabenliste für jeden Tag
-    tasks = Array.from({ length: calendarData.length }, () => []);
-  });
+  function getMonthName(month) {
+    const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+    return months[month];
+  }
 </script>
 
-<div>
-  <button on:click={previousMonth}>Previous</button>
-  <h1>{getMonthName(currentMonth)} {currentYear}</h1>
-  <button on:click={nextMonth}>Next</button>
+<div class="calendar-container">
+  <div class="calendar-header">
+    <button on:click={previousMonth}>&lt;</button>
+    <h1>{getMonthName(currentMonth)} {currentYear}</h1>
+    <button on:click={nextMonth}>&gt;</button>
+  </div>
+
+  {#each week as weekDays, weekIndex}
+    <div key={weekIndex}>
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th>Mo</th>
+            <th>Di</th>
+            <th>Mi</th>
+            <th>Do</th>
+            <th>Fr</th>
+            <th>Sa</th>
+            <th>So</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each weekDays as day, dayIndex}
+            <tr key={dayIndex}>
+              {#each day as date, dateIndex}
+                <td key={dateIndex}>
+                  {#if date !== null}
+                    <div>{date}</div>
+                    {#if tasks[dayIndex] && tasks[dayIndex].length > 0}
+                      <div class="task-count">{tasks[dayIndex].length}</div>
+                    {/if}
+                  {/if}
+                </td>
+              {/each}
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  {/each}
 </div>
 
-{#each calendarData as week, weekIndex}
-  <div key={weekIndex}>
-    <table>
-      <thead>
-        <tr>
-          <th>Mo</th>
-          <th>Di</th>
-          <th>Mi</th>
-          <th>Do</th>
-          <th>Fr</th>
-          <th>Sa</th>
-          <th>So</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each week as day, dayIndex}
-          <tr key={dayIndex}>
-            {#each day as cell, cellIndex}
-              <td key={cellIndex}>
-                {#if cell}
-                  <div>{cell.date}</div>
-                  {#each cell.events as event, eventIndex}
-                    <div key={eventIndex}>{event}</div>
-                  {/each}
-                {/if}
-              </td>
-            {/each}
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-  </div>
-{/each}
-
 <style>
-  table {
+  .calendar-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .calendar-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .calendar-header button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    margin: 0 10px;
+  }
+
+  .calendar-header h1 {
+    display: inline;
+    font-size: 24px;
+    margin: 0;
+  }
+
+  .calendar-table {
     width: 100%;
     border-collapse: collapse;
   }
-  th, td {
+
+  .calendar-table th, .calendar-table td {
     border: 1px solid #ccc;
-    padding: 8px;
+    padding: 10px;
     text-align: center;
+  }
+
+  .calendar-table td {
+    position: relative;
+  }
+
+  .task-count {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: #ff5722;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 50%;
+    font-size: 12px;
   }
 </style>

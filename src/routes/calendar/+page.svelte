@@ -1,11 +1,12 @@
-<script context="module">
-    export { load } from './page.js'; 
-</script>
-  
+
 <script>
-    export let events = []; 
-    import Calendar from '$lib/Calendar.svelte'; 
+    import Calendar from "$lib/Calendar.svelte";
+    export let initialEvents;
+    export let initialTasks;
+
 </script>
-  
-  <Calendar {events} />
-  
+<Calendar {initialEvents} {initialTasks}></Calendar>
+
+<footer>
+    <p>&copy; 2024 </p>
+  </footer>
