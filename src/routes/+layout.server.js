@@ -12,10 +12,9 @@ export const load = async ({ locals, url }) => {
         if (url.pathname === '/' ||
             url.pathname === '/register' ||
             url.pathname === '/login') redirect(307, '/home');
-        const record = await locals.pb.collection('users').getOne(locals.user.id);
-        record.avatarURL = locals.pb.files.getUrl(record, locals.user.avatar);
+        locals.user.avatarURL = locals.pb.files.getUrl(locals.user, locals.user.avatar);
         return {
-            user: record
+            user: locals.user
         }
     }
 
