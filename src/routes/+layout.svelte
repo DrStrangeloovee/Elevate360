@@ -31,7 +31,7 @@
                 <li class="nav-item px-2">
                     <a class="nav-link" href="/calender">
                         <i class="bi bi-calendar d-block mx-auto"></i>
-                        Calender
+                        Calendar
                     </a>
                 </li>
                 <li class="nav-item px-2">
