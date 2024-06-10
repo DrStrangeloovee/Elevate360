@@ -10,7 +10,7 @@
 <div class="container-fluid pb-5">
     <div class="row">
         <div class="col-8 offset-2">
-            <h2 class="text-center">Welcome to Elevate360!</h2>
+            <h2 class="text-center">Welcome to <span class="elevate360-text">Elevate360</span>!</h2>
             <p class="text-body-secondary text-center">
                 Your assistant to help you stay organized.
             </p>
@@ -140,12 +140,13 @@
         <div class="col-4 offset-4 mt-2">
             <h3 id="about" class="text-center">About</h3>
             <p class="lead">
-                Elevate360 was a project developed by students of the <a
+                <span class="elevate360-text">Elevate360</span> was a project developed by students of the <a
                     href="https://www.technikum-wien.at/"
                     >University of Applied Sciences Technikum Wien</a
                 >. The project was realized over the second semester of our Computer Science
                 Bachelor's degree in the context of the IT Project course.
             </p>
+            <img class="logo row" src="logo_full.png" alt="Elevate360 logo">
         </div>
     </div>
     <hr />
@@ -177,7 +178,7 @@
         <div class="col">
             <h3 class="text-center">Technologies</h3>
             <p class="text-center lead">
-                The following technologies have been used to develop Elevate360:
+                The following technologies have been used to develop <span class="elevate360-text">Elevate360</span>:
             </p>
         </div>
     </div>
@@ -277,5 +278,24 @@
     img.technologies {
         width: 170px;
         height: 150px;
+    }
+
+    .logo {
+        width: 200px;
+        margin: auto;
+    }
+
+    @font-face {
+        font-family: 'Apex-Mk2-Bold-Extended';
+        src:url('Apex-Mk2-Bold-Extended.ttf.woff') format('woff'),
+        url('Apex-Mk2-Bold-Extended.ttf.svg#Apex-Mk2-Bold-Extended') format('svg'),
+        url('Apex-Mk2-Bold-Extended.ttf.eot'),
+        url('Apex-Mk2-Bold-Extended.ttf.eot?#iefix') format('embedded-opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .elevate360-text {
+        font-family: 'Apex-Mk2-Bold-Extended', system-ui;
     }
 </style>

@@ -11,6 +11,13 @@
         width: 32px;
         height: 32px;
     }
+    .logo {
+        height: 40px;
+    }
+    .logo-name {
+        height: 20px;
+        margin: auto;
+    }
 </style>
 
 <div class="mb-5 bg-white" class:sticky-top={!data.user}>
@@ -19,7 +26,8 @@
     >
         <div class="col-md-3 mb-2 mb-md-0">
             <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-                Elevate360 Logo
+                <img class="logo" src="logo.png" alt="Elevate360 logo">
+                <img class="logo-name" src="logo_name.png" alt="Elevate360 logo name">
             </a>
         </div>
         {#if data.user}

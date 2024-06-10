@@ -7,13 +7,20 @@
     });
 </script>
 
+<style>
+    .logo {
+        width: 50px;
+    }
+</style>
+
 <div class="justify-content-center">
     {#if form?.error}
         <p>{form.message}</p>
     {/if}
     <div class="mx-auto col-3">
         <form method="POST" action="?/register" class="border rounded p-3 mb-3">
-            <div class="text-center mb-3">
+            <div class="text-center mb-4">
+                <img class="logo" src="logo.png" alt="Elevate360 logo">
                 <h1>Register</h1>
                 <small class="text-body-secondary"
                     >or <a href="/login">login</a> with an existing account.</small
