@@ -7,11 +7,11 @@
     });
 </script>
 
-<div class="row justify-content-center">
+<div class="justify-content-center">
     {#if form?.error}
         <p>{form.message}</p>
     {/if}
-    <div class="col-3">
+    <div class="mx-auto col-3">
         <form method="POST" action="?/register" class="border rounded p-3 mb-3">
             <div class="text-center mb-3">
                 <h1>Register</h1>
