@@ -58,8 +58,8 @@
             <div class="col-md-3 text-end">
                 <form action="/logout" method="POST">
                     <a class="me-2" href="/profile">
-                        {#if data.user.img}
-                            <img class="profile-pic rounded-circle" src="{data.user.img}" alt="profile"/>
+                        {#if data.user.avatarURL}
+                            <img class="profile-pic rounded-circle" src="{data.user.avatarURL}" alt="profile"/>
                         {:else}
                             <i style="vertical-align: middle;" class="bi bi-person-circle h2"></i>
                         {/if}
