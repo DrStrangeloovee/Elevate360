@@ -1,7 +1,7 @@
 /// <reference path="../pb_data/types.d.ts" />
 
 const defaultUsers = [
-    { username: "radwan", name: "Mariam Radwan", email: "if23b023@technikum - wien.at" },
+    { username: "radwan", name: "Mariam Radwan", email: "if23b023@technikum-wien.at" },
     { username: "marco", name: "Marco Auenhammer", email: "if23b501@technikum-wien.at" },
     { username: "hagar", name: "Hagar Ahmed", email: "if23b004@technikum-wien.at" },
     { username: "imad", name: "Imad Taher", email: "if22b016@technikum-wien.at" },
