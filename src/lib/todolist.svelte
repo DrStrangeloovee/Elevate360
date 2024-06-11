@@ -1,100 +1,53 @@
 <script>
-  import { createContext, setContext, getContext } from 'svelte';
-  import { onMount } from 'svelte';
-
   let todos = [];
   let newTodo = '';
   let reminder = '';
   let deadline = '';
-  let isEditing = false;
+  let isEditing = null;
   let editedText = '';
   let newReminder = '';
   let newDeadline = '';
 
-  const eventContext = createContext({
-    handlers: {},
-    dispatch(eventName, eventData) {
-      const { handlers } = getContext('eventContext');
-      if (handlers[eventName]) {
-        handlers[eventName](eventData);
-      }
-    },
-    on(eventName, handler) {
-      setContext('eventContext', {
-        ...getContext('eventContext'),
-        handlers: { ...getContext('eventContext').handlers, [eventName]: handler }
-      });
-    },
-    off(eventName) {
-      setContext('eventContext', {
-        ...getContext('eventContext'),
-        handlers: { ...getContext('eventContext').handlers, [eventName]: undefined }
-      });
-    }
-  });
-
-  onMount(() => {
-    setContext('eventContext', eventContext);
-    const { on } = getContext('eventContext');
-
-    on('addTodo', ({ text, reminder, deadline }) => {
-      todos = [
-        ...todos,
-        { id: Date.now(), text, reminder, deadline, completed: false }
-      ];
-    });
-
-    on('completeTodo', (id) => {
-      todos = todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo);
-    });
-
-    on('removeTodo', (id) => {
-      todos = todos.filter(todo => todo.id !== id);
-    });
-
-    on('editTodo', ({ id, text, reminder, deadline }) => {
-      todos = todos.map(todo => todo.id === id ? { ...todo, text, reminder, deadline } : todo);
-    });
-  });
-
   function handleAddTodo() {
     if (newTodo.trim()) {
-      const { dispatch } = getContext('eventContext');
-      dispatch('addTodo', { text: newTodo, reminder, deadline });
+      todos = [
+        ...todos,
+        { id: Date.now(), text: newTodo, reminder, deadline, completed: false }
+      ];
       newTodo = '';
       reminder = '';
       deadline = '';
     }
   }
 
-  function handleComplete(todo) {
-    const { dispatch } = getContext('eventContext');
-    dispatch('completeTodo', todo.id);
+  function handleComplete(todoId) {
+    todos = todos.map(todo =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+    );
   }
 
-  function handleRemove(todo) {
-    const { dispatch } = getContext('eventContext');
-    dispatch('removeTodo', todo.id);
+  function handleRemove(todoId) {
+    todos = todos.filter(todo => todo.id !== todoId);
   }
 
-  function handleEdit(todo) {
-    isEditing = true;
-    editedText = todo.text;
-    newReminder = todo.reminder || '';
-    newDeadline = todo.deadline || '';
+  function handleEdit(todoId, text, reminder, deadline) {
+    isEditing = todoId;
+    editedText = text;
+    newReminder = reminder || '';
+    newDeadline = deadline || '';
   }
 
-  function saveEdit(todo) {
-    const { dispatch } = getContext('eventContext');
-    dispatch('editTodo', { id: todo.id, text: editedText, reminder: newReminder, deadline: newDeadline });
-    isEditing = false;
+  function saveEdit(todoId) {
+    todos = todos.map(todo =>
+      todo.id === todoId
+        ? { ...todo, text: editedText, reminder: newReminder, deadline: newDeadline }
+        : todo
+    );
+    isEditing = null;
   }
 
-  function cancelEdit(todo) {
-    isEditing = false;
-    editedText = todo.text;
-    newReminder = todo.reminder || '';
-    newDeadline = todo.deadline || '';
+  function cancelEdit() {
+    isEditing = null;
   }
 
   function isDateExpired(dateStr) {
@@ -105,7 +58,7 @@
 </script>
 
 <main>
-  <h1 class="title">Planned</h1>
+  <h1 class="title">To-do</h1>
 
   <section class="todos">
     <div class="add-todo">
@@ -126,20 +79,7 @@
         {#each todos as todo (todo.id)}
           <div class="task-item">
             <div class="task-content">
-              <span>{todo.text}</span>
-              {#if todo.reminder}
-                <div class:reminder={isDateExpired(todo.reminder)}>Reminder: {todo.reminder}</div>
-              {/if}
-              {#if todo.deadline}
-                <div class:deadline={isDateExpired(todo.deadline)}>Deadline: {todo.deadline}</div>
-              {/if}
-            </div>
-            <div class="action-buttons">
-              {#if !isEditing}
-                <input type="checkbox" checked={todo.completed} on:change={() => handleComplete(todo)} class="checkbox" />
-                <button on:click={() => handleEdit(todo)} class="btn small">Edit</button>
-                <button on:click={() => handleRemove(todo)} class="btn cancel small">Delete</button>
-              {:else}
+              {#if isEditing === todo.id}
                 <input type="text" bind:value={editedText} class="input-large" />
                 <div class="input-group">
                   <label for="edit-reminder">Reminder</label>
@@ -150,8 +90,21 @@
                   <input id="edit-deadline" type="datetime-local" bind:value={newDeadline} class="input-large" />
                 </div>
                 <div class="action-buttons">
-                  <button on:click={() => saveEdit(todo)} class="btn small">Save</button>
-                  <button on:click={() => cancelEdit(todo)} class="btn cancel small">Cancel</button>
+                  <button on:click={() => saveEdit(todo.id)} class="btn small">Save</button>
+                  <button on:click={cancelEdit} class="btn cancel small">Cancel</button>
+                </div>
+              {:else}
+                <span>{todo.text}</span>
+                {#if todo.reminder}
+                  <div class:reminder={isDateExpired(todo.reminder)}>Reminder: {todo.reminder}</div>
+                {/if}
+                {#if todo.deadline}
+                  <div class:deadline={isDateExpired(todo.deadline)}>Deadline: {todo.deadline}</div>
+                {/if}
+                <div class="action-buttons">
+                  <input type="checkbox" checked={todo.completed} on:change={() => handleComplete(todo.id)} class="checkbox" />
+                  <button on:click={() => handleEdit(todo.id, todo.text, todo.reminder, todo.deadline)} class="btn small">Edit</button>
+                  <button on:click={() => handleRemove(todo.id)} class="btn cancel small">Delete</button>
                 </div>
               {/if}
             </div>
@@ -161,7 +114,7 @@
 
       <div class="actions">
         <span class="todo-count">{todos.filter(todo => !todo.completed).length} left</span>
-        <button class="clear-completed">Clear completed</button>
+        <button class="clear-completed" on:click={() => todos = todos.filter(todo => !todo.completed)}>Clear completed</button>
       </div>
     {/if}
   </section>
