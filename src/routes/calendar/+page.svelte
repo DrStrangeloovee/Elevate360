@@ -1,11 +1,9 @@
 
 <script>
-    import Calendar from "$lib/Calendar.svelte";
-    export let initialEvents;
+  import Calendar from '$lib/calendar.svelte';
+
+  let { events } = $props();
 </script>
-
-<Calendar {initialEvents}></Calendar>
-
-<footer>
-    <p>&copy; 2024</p>
-</footer>
+  
+  <Calendar {events} on:eventDropped={handleEventDropped}></Calendar>
+  

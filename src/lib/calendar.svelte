@@ -1,99 +1,120 @@
-
 <script>
-  export let initialEvents = [];
-
-  let today = new Date();
-  let currentMonth = today.getMonth();
-  let currentYear = today.getFullYear();
-
-  let newEvent = {
-      date: '',
-      appointment: {
-          name: 'string',
-          description: 'string',
-          location: 'string'
-      }
-  };
-
-  async function saveEvent() {
-      const response = await fetch('api/calendar', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newEvent)
+    import { onMount } from 'svelte';
+    import { Calendar } from '@fullcalendar/core';
+    import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
+    import dayGridPlugin from '@fullcalendar/daygrid';
+    import timeGridPlugin from '@fullcalendar/timegrid';
+    import { createEventDispatcher } from 'svelte';
+  
+    let { events } = $props();
+  
+    const dispatch = createEventDispatcher();
+  
+    onMount(() => {
+      let containerEl = document.getElementById('external-events');
+      let calendarEl = document.getElementById('calendar');
+      let checkbox = document.getElementById('drop-remove');
+  
+      new Draggable(containerEl, {
+        itemSelector: '.fc-event',
+        eventData: function(eventEl) {
+          return {
+            title: eventEl.innerText
+          };
+        }
       });
-
-      if (response.ok) {
-          const createdEvent = await response.json();
-          initialEvents = [...initialEvents, createdEvent];
-      }
-  }
-
-  function generateCalendar(month, year) {
-      let daysInMonth = new Date(year, month + 1, 0).getDate();
-      let startDay = new Date(year, month, 1).getDay();
-      let weeks = [];
-      let day = 1;
-      for (let i = 0; i < (startDay > 0 ? 6 : 5); i++) {
-          weeks[i] = [];
-          for (let j = 0; j < 7; j++) {
-              if ((i === 0 && j < startDay) || day > daysInMonth) {
-                  weeks[i][j] = null;
-              } else {
-                  weeks[i][j] = {
-                      date: day,
-                      events: initialEvents.filter(e => new Date(e.date).getDate() === day && new Date(e.date).getMonth() === month && new Date(e.date).getFullYear() === year)
-                  };
-                  day++;
-              }
+  
+      let calendar = new Calendar(calendarEl, {
+        plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin],
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        editable: true,
+        droppable: true,
+        events: events,
+        drop: function(info) {
+          if (checkbox.checked) {
+            info.draggedEl.parentNode.removeChild(info.draggedEl);
           }
-      }
-      return weeks;
-  }
-</script>
-
-
-<div>
-  <form on:submit|preventDefault={saveEvent}>
-      <input type="date" bind:value={newEvent.date} />
-      <input type="text" placeholder="Name" bind:value={newEvent.appointment.name} />
-      <input type="text" placeholder="Description" bind:value={newEvent.appointment.description} />
-      <input type="text" placeholder="Location" bind:value={newEvent.appointment.location} />
-      <button type="submit">Save Event</button>
-  </form>
-</div>
-
-<div>
-  <table>
-      <thead>
-          <tr>
-              <th>Mo</th>
-              <th>Di</th>
-              <th>Mi</th>
-              <th>Do</th>
-              <th>Fr</th>
-              <th>Sa</th>
-              <th>So</th>
-          </tr>
-      </thead>
-      <tbody>
-          {#each generateCalendar(currentMonth, currentYear) as week}
-              <tr>
-                  {#each week as day}
-                      <td>
-                          {#if day}
-                              <div>{day.date}</div>
-                              {#each day.events as event}
-                                  <div class="event">{event.appointment.name}</div>
-                              {/each}
-                          {/if}
-                      </td>
-                  {/each}
-              </tr>
-          {/each}
-      </tbody>
-  </table>
-</div>
-
-
+          const newEvent = {
+            title: info.draggedEl.innerText,
+            start: info.dateStr
+          };
+          dispatch('eventDropped', newEvent);
+        }
+      });
+  
+      calendar.render();
+    });
+  </script>
+  
+  
+  <style>
+    /*body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+  */
+    #external-events {
+      position: fixed;
+      z-index: 2;
+      top: 20px;
+      left: 20px;
+      width: 150px;
+      padding: 0 10px;
+      border: 1px solid #ccc;
+      background: #eee;
+    }
+  
+    #external-events .fc-event {
+      cursor: move;
+      margin: 3px 0;
+    }
+  
+    #calendar-container {
+      position: relative;
+      z-index: 1;
+      margin-left: 200px;
+    }
+  
+    #calendar {
+      max-width: 1100px;
+      margin: 20px auto;
+    }
+  </style>
+  
+  <div id="external-events">
+    <p>
+      <strong>Draggable Events</strong>
+    </p>
+  
+    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+      <div class="fc-event-main">My Event 1</div>
+    </div>
+    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+      <div class="fc-event-main">My Event 2</div>
+    </div>
+    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+      <div class="fc-event-main">My Event 3</div>
+    </div>
+    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+      <div class="fc-event-main">My Event 4</div>
+    </div>
+    <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+      <div class="fc-event-main">My Event 5</div>
+    </div>
+  
+    <p>
+      <input type="checkbox" id="drop-remove" />
+      <label for="drop-remove">remove after drop</label>
+    </p>
+  </div>
+  
+  <div id="calendar-container">
+    <div id="calendar"></div>
+  </div>
+  
