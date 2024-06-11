@@ -1,4 +1,3 @@
-
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ locals }) {
@@ -6,7 +5,7 @@ export async function load({ locals }) {
         // Daten aus PocketBase laden
         const events = await locals.pb.collection('calendar_events').getFullList();
         return {
-            events
+            props: { events }
         };
     } catch (error) {
         throw redirect(307, '/error');
