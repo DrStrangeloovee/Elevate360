@@ -1,9 +1,7 @@
+import { error } from '@sveltejs/kit';
+
 // Laden der Daten
 export async function load({ locals }) {
-    if (!locals.user) {
-        throw redirect(307, '/login');
-    }
-
     try {
         const events = await locals.pb.collection("calendar_events").getFullList();
         return {
@@ -11,19 +9,15 @@ export async function load({ locals }) {
         };
     } catch (err) {
         console.error('Fehler beim Abrufen der Kalenderereignisse:', err);
-        throw error(500, 'Fehler beim Abrufen der Kalenderereignisse');
+        error(500, 'Fehler beim Abrufen der Kalenderereignisse');
     }
 }
 
 // Speichern der Daten (Actions)
 export const actions = {
     default: async ({ request, locals }) => {
-        if (!locals.user) {
-            throw redirect(307, '/login');
-        }
-
         if (!locals.user.admin) {
-            throw error(403, 'Nur Admins dürfen diese Aktion ausführen');
+            error(403, 'Nur Admins dürfen diese Aktion ausführen');
         }
 
         try {
@@ -35,7 +29,7 @@ export const actions = {
             };
         } catch (err) {
             console.error('Fehler beim Erstellen des Kalenderereignisses:', err);
-            throw error(500, 'Fehler beim Erstellen des Kalenderereignisses');
+            error(500, 'Fehler beim Erstellen des Kalenderereignisses');
         }
     }
 };
