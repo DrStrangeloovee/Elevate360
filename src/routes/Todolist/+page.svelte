@@ -1,6 +1,6 @@
 <script>
+    import { onMount } from 'svelte';
     import Todolist from '$lib/Todolist.svelte';
-
     let todos = [];
 
     onMount(async () => {
