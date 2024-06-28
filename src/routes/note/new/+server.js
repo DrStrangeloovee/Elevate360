@@ -1,9 +1,7 @@
-import { json, error } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET() {
-    console.log("get new");
-
 
     return json({ status: 200, ok: true, text: 'Successfully saved note.' });
 
