@@ -6,10 +6,9 @@
     import LinkTool from '@editorjs/link';
     import List from '@editorjs/list';
     import Paragraph from '@editorjs/paragraph';
-    import { onMount } from 'svelte';
+    import { page } from '$app/stores';
 
     const defaultNoteData = {
-        id: null,
         title: `My note from ${new Date().toLocaleDateString(undefined, {
             weekday: 'short',
             year: 'numeric',
@@ -21,7 +20,6 @@
     // Set content of note/default content
     let { noteData = defaultNoteData } = $props();
     let titleInputNode;
-    let editorInitialized = false;
     let editorInstance = $state();
     let isEditingTitle = $state(false);
     let savePromise = $state(Promise.resolve([]));
@@ -51,7 +49,7 @@
                         'content-type': 'application/json'
                     },
                     body: JSON.stringify({
-                        id: noteData.id,
+                        id: $page.url.searchParams.get('id'),
                         title: noteData.title,
                         content: outputData
                     })
@@ -68,9 +66,10 @@
             autofocus: true,
             inlineToolbar: true,
             onReady: () => {
-                editorInitialized = true;
+                saveNote();
             },
             onChange: (api, event) => {
+                console.log('saving');
                 saveNote();
             },
             // Initialize tools
