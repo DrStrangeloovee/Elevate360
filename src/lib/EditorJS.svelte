@@ -43,6 +43,7 @@
         editorInstance
             .save()
             .then((outputData) => {
+                console.log(outputData);
                 const response = fetch('/note/save', {
                     method: 'POST',
                     headers: {
