@@ -1,6 +1,6 @@
 <script>
-    import EditorJs from '$lib/EditorJS.svelte';
     import NoteList from '$lib/NoteList.svelte';
+
     let { data } = $props();
 
     let greetingTime = new Date().getHours();

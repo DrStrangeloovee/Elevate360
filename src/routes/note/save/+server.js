@@ -1,22 +1,17 @@
-import { json, error } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
-/** @type {import('./$types').RequestHandler} */
-export async function POST({ request, locals }) {
-    const { id, content } = await request.json();
-
-
+export async function POST({ locals, request }) {
+    const { id, title, content } = await request.json();
     try {
+        // Try fetching requested note
 
-        if (id === null) {
-            console.log("saving new", id);
-            const test = await locals.pb.collection('notes').create(content);
-            console.log(test);
-        } else {
-            await locals.pb.collection('notes').update(id, content);
-        }
+        await locals.pb.collection('notes').update(id, {
+            "title": title,
+            "content": content
+        });
 
-        return json({ status: 200, ok: true, text: 'Successfully saved note.' });
-    } catch (ex) {
-        error(404, `${JSON.stringify(ex)}`);
+    } catch (error) {
+        return json({ ok: false });
     }
+    return json({ ok: true });
 }

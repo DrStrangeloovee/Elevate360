@@ -1,9 +1,3 @@
-<script>
-    export let data;
-    console.log(data);
-    console.log('data');
-</script>
-
 <div class="container-fluid pb-5">
     <div class="row">
         <div class="col-8 offset-2">

@@ -1,175 +1,122 @@
-
 <script>
-  import { createContext, setContext, onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+  import { Calendar } from '@fullcalendar/core';
+  import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
+  import dayGridPlugin from '@fullcalendar/daygrid';
+  import timeGridPlugin from '@fullcalendar/timegrid';
 
-  const myContext = createContext();
+  export let events = [];
 
-  export let initialEvents = [];
-  export let initialTasks = [];
+  let calendar; 
 
-  let today = new Date(2024, 0); // Startdatum: Januar 2024
-  let currentMonth = today.getMonth();
-  let currentYear = today.getFullYear();
-
-  let events = initialEvents;
-  let tasks = initialTasks;
-
-  setContext(myContext, { events, tasks });
-
-  function nextMonth() {
-    currentMonth = (currentMonth + 1) % 12;
-    if (currentMonth === 0) currentYear++;
-    updateCalendar();
-  }
-
-  function previousMonth() {
-    currentMonth = (currentMonth - 1 + 12) % 12;
-    if (currentMonth === 11) currentYear--;
-    updateCalendar();
-  }
-
-  function updateCalendar() {
-    setContext(myContext, { events, tasks });
-  }
-
-  function addTask(dayIndex) {
-    const task = prompt("Today's Task:");
-    if (task !== null && task !== "") {
-      tasks[dayIndex] = [...(tasks[dayIndex] || []), task];
-      updateCalendar();
+  $: {
+    if (calendar) {
+      calendar.setOption('events', events);
     }
   }
-  addTask();
-
-  function deleteTask(dayIndex, taskIndex) {
-    tasks[dayIndex].splice(taskIndex, 1);
-    updateCalendar();
-  }
-  deleteTask();
 
   onMount(() => {
-    updateCalendar();
+    let containerEl = document.getElementById('external-events');
+    let calendarEl = document.getElementById('calendar');
+    let checkbox = document.getElementById('drop-remove');
+
+    new Draggable(containerEl, {
+      itemSelector: '.fc-event',
+      eventData: function(eventEl) {
+        return {
+          title: eventEl.innerText
+        };
+      }
+    });
+
+    calendar = new Calendar(calendarEl, {
+      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin],
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      editable: true,
+      droppable: true,
+      events: events,
+      drop: function(info) {
+        if (checkbox.checked) {
+          info.draggedEl.parentNode.removeChild(info.draggedEl);
+        }
+        const newEvent = {
+          title: info.draggedEl.innerText,
+          start: info.dateStr
+        };
+        calendarEl.dispatchEvent(new CustomEvent('eventDropped', { detail: newEvent }));
+      }
+    });
+
+    calendar.render();
   });
 
-  function generateCalendar(month, year) {
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const startDay = new Date(year, month, 1).getDay();
-
-
-    const weeks = [];
-    let day = 1;
-    for (let i = 0; i < (startDay > 0 ? 6 : 5); i++) {
-      weeks[i] = [];
-      for (let j = 0; j < 7; j++) {
-        if ((i === 0 && j < startDay) || day > daysInMonth) {
-          weeks[i][j] = null;
-        } else {
-          weeks[i][j] = day;
-          day++;
-        }
-      }
+  
+  onDestroy(() => {
+    if (calendar) {
+      calendar.destroy();
     }
-    return weeks;
-  }
-
-  generateCalendar();
-
-  function getMonthName(month) {
-    const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-    return months[month];
-  }
+  });
 </script>
 
-<div class="calendar-container">
-  <div class="calendar-header">
-    <button on:click={previousMonth}>&lt;</button>
-    <h1>{getMonthName(currentMonth)} {currentYear}</h1>
-    <button on:click={nextMonth}>&gt;</button>
-  </div>
-
-  {#each week as weekDays, weekIndex}
-    <div key={weekIndex}>
-      <table class="calendar-table">
-        <thead>
-          <tr>
-            <th>Mo</th>
-            <th>Di</th>
-            <th>Mi</th>
-            <th>Do</th>
-            <th>Fr</th>
-            <th>Sa</th>
-            <th>So</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each weekDays as day, dayIndex}
-            <tr key={dayIndex}>
-              {#each day as date, dateIndex}
-                <td key={dateIndex}>
-                  {#if date !== null}
-                    <div>{date}</div>
-                    {#if tasks[dayIndex] && tasks[dayIndex].length > 0}
-                      <div class="task-count">{tasks[dayIndex].length}</div>
-                    {/if}
-                  {/if}
-                </td>
-              {/each}
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
-  {/each}
-</div>
 
 <style>
-  .calendar-container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .calendar-header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .calendar-header button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    margin: 0 10px;
-  }
-
-  .calendar-header h1 {
-    display: inline;
-    font-size: 24px;
-    margin: 0;
-  }
-
-  .calendar-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .calendar-table th, .calendar-table td {
+  #external-events {
+    position: fixed;
+    z-index: 2;
+    top: 20px;
+    left: 20px;
+    width: 150px;
+    padding: 0 10px;
     border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
+    background: #eee;
   }
 
-  .calendar-table td {
+  #external-events .fc-event {
+    cursor: move;
+    margin: 3px 0;
+  }
+
+  #calendar-container {
     position: relative;
+    z-index: 1;
+    margin-left: 200px;
   }
 
-  .task-count {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    background-color: #ff5722;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 50%;
-    font-size: 12px;
+  #calendar {
+    max-width: 1100px;
+    margin: 20px auto;
   }
 </style>
+
+<div id="external-events">
+  <p>
+    <strong>Draggable Events</strong>
+  </p>
+  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+    <div class="fc-event-main">My Event 1</div>
+  </div>
+  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+    <div class="fc-event-main">My Event 2</div>
+  </div>
+  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+    <div class="fc-event-main">My Event 3</div>
+  </div>
+  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+    <div class="fc-event-main">My Event 4</div>
+  </div>
+  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+    <div class="fc-event-main">My Event 5</div>
+  </div>
+  <p>
+    <input type="checkbox" id="drop-remove" />
+    <label for="drop-remove">remove after drop</label>
+  </p>
+</div>
+
+<div id="calendar-container">
+  <div id="calendar"></div>
+</div>
