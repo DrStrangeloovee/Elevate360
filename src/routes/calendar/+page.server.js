@@ -1,11 +1,22 @@
+import { redirect, error } from '@sveltejs/kit';
+
 // Laden der Daten
 export async function load({ locals }) {
     if (!locals.user) {
-        throw redirect(307, '/login');
+        return {
+            status: 307,
+            redirect: '/login'
+        };
     }
 
     try {
-        const events = await locals.pb.collection("calendar_events").getFullList();
+        // Abrufen aller Dokumente in der collection "calendar_events"
+        const records = await locals.pb.collection("calendar_events").getFullList();
+        const events = records.map(record => ({
+            title: record.title,
+            start: record.start,
+            end: record.end
+        }));
         return {
             events
         };

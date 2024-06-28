@@ -5,6 +5,7 @@
   import dayGridPlugin from '@fullcalendar/daygrid';
   import timeGridPlugin from '@fullcalendar/timegrid';
 
+
   export let events = [];
 
   let calendar; 
