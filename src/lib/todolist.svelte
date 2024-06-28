@@ -1,297 +1,201 @@
-<script lang="ts">
-  import type { ITodo } from '$root/types/todo';
-  import AddTodo from './AddTodo.svelte';
-  import Todo from './Todo.svelte';
+<script>
+  let todos = [];
+  let newTodo = '';
+  let reminder = '';
+  let deadline = '';
+  let isEditing = null;
+  let editedText = '';
+  let newReminder = '';
+  let newDeadline = '';
 
-  let todos: ITodo[] = [
-    { id: '1e4a59703af84', text: 'Todo 1', completed: true },
-    { id: '9e09bcd7b9349', text: 'Todo 2', completed: false },
-    { id: '9e4273a51a37c', text: 'Todo 3', completed: false },
-    { id: '53ae48bf605cc', text: 'Todo 4', completed: false },
-  ];
-
-  $: todosAmount = todos.length;
-
-  function generateRandomId(): string {
-    return Math.random().toString(16).slice(2);
+  function handleAddTodo() {
+    if (newTodo.trim()) {
+      todos = [
+        ...todos,
+        { id: Date.now(), text: newTodo, reminder, deadline, completed: false }
+      ];
+      newTodo = '';
+      reminder = '';
+      deadline = '';
+    }
   }
 
-  function addTodo(event: CustomEvent<string>) {
-    const newTodo: ITodo = {
-      id: generateRandomId(),
-      text: event.detail,
-      completed: false,
-    };
-    todos = [...todos, newTodo];
+  function handleComplete(todoId) {
+    todos = todos.map(todo =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+    );
   }
 
-  function completeTodo(id: string): void {
-    todos = todos.map((todo) => {
-      if (todo.id === id) {
-        todo.completed = !todo.completed;
-      }
-      return todo;
-    });
+  function handleRemove(todoId) {
+    todos = todos.filter(todo => todo.id !== todoId);
   }
 
-  function removeTodo(id: string): void {
-    todos = todos.filter((todo) => todo.id !== id);
+  function handleEdit(todoId, text, reminder, deadline) {
+    isEditing = todoId;
+    editedText = text;
+    newReminder = reminder || '';
+    newDeadline = deadline || '';
   }
 
-  function editTodo(id: string, newTodo: string): void {
-    let currentTodo = todos.findIndex((todo) => todo.id === id);
-    todos[currentTodo].text = newTodo;
+  function saveEdit(todoId) {
+    todos = todos.map(todo =>
+      todo.id === todoId
+        ? { ...todo, text: editedText, reminder: newReminder, deadline: newDeadline }
+        : todo
+    );
+    isEditing = null;
+  }
+
+  function cancelEdit() {
+    isEditing = null;
+  }
+
+  function isDateExpired(dateStr) {
+    const currentDate = new Date();
+    const targetDate = new Date(dateStr);
+    return currentDate > targetDate;
   }
 </script>
 
 <main>
-  <h1 class="title">To-do's</h1>
+  <h1 class="title">To-do</h1>
 
   <section class="todos">
-    <AddTodo on:addTodo={addTodo} />
+    <div class="add-todo">
+      <input type="text" bind:value={newTodo} placeholder="Add a new task..." class="input-large" />
+      <div class="input-group">
+        <label for="reminder">Reminder</label>
+        <input id="reminder" type="datetime-local" bind:value={reminder} class="input-large" />
+      </div>
+      <div class="input-group">
+        <label for="deadline">Deadline</label>
+        <input id="deadline" type="datetime-local" bind:value={deadline} class="input-large" />
+      </div>
+      <button on:click={handleAddTodo} class="btn">Add Task</button>
+    </div>
 
-    {#if todosAmount}
+    {#if todos.length}
       <ul class="todo-list">
         {#each todos as todo (todo.id)}
-          <Todo {todo} {completeTodo} {removeTodo} {editTodo} />
+          <div class="task-item">
+            <div class="task-content">
+              {#if isEditing === todo.id}
+                <input type="text" bind:value={editedText} class="input-large" />
+                <div class="input-group">
+                  <label for="edit-reminder">Reminder</label>
+                  <input id="edit-reminder" type="datetime-local" bind:value={newReminder} class="input-large" />
+                </div>
+                <div class="input-group">
+                  <label for="edit-deadline">Deadline</label>
+                  <input id="edit-deadline" type="datetime-local" bind:value={newDeadline} class="input-large" />
+                </div>
+                <div class="action-buttons">
+                  <button on:click={() => saveEdit(todo.id)} class="btn small">Save</button>
+                  <button on:click={cancelEdit} class="btn cancel small">Cancel</button>
+                </div>
+              {:else}
+                <span>{todo.text}</span>
+                {#if todo.reminder}
+                  <div class:reminder={isDateExpired(todo.reminder)}>Reminder: {todo.reminder}</div>
+                {/if}
+                {#if todo.deadline}
+                  <div class:deadline={isDateExpired(todo.deadline)}>Deadline: {todo.deadline}</div>
+                {/if}
+                <div class="action-buttons">
+                  <input type="checkbox" checked={todo.completed} on:change={() => handleComplete(todo.id)} class="checkbox" />
+                  <button on:click={() => handleEdit(todo.id, todo.text, todo.reminder, todo.deadline)} class="btn small">Edit</button>
+                  <button on:click={() => handleRemove(todo.id)} class="btn cancel small">Delete</button>
+                </div>
+              {/if}
+            </div>
+          </div>
         {/each}
       </ul>
 
       <div class="actions">
         <span class="todo-count">{todos.filter(todo => !todo.completed).length} left</span>
-        <div class="filters">
-          <button class="filter">All</button>
-          <button class="filter">Active</button>
-          <button class="filter">Completed</button>
-        </div>
-        <button class="clear-completed">Clear completed</button>
+        <button class="clear-completed" on:click={() => todos = todos.filter(todo => !todo.completed)}>Clear completed</button>
       </div>
     {/if}
   </section>
 </main>
 
 <style>
- 
-.main{
-  text-align: center;
-}
-
-
   .title {
-    font-size: 30px;
+    font-size: 24px;
     padding: 20px;
-    font-weight: inherit;
     text-align: center;
-    color: red;
+    color: #333;
   }
-
   .todos {
-    --width: 500px;
-    --todos-bg: hsl(0 0% 98%);
-    --todos-text: hsl(220 20% 14%);
-
-    width: var(--width);
-    color: var(--todos-text);
-    background-color: var(--todos-bg);
-    border-radius: var(--radius-base);
-    border: 1px solid var(--color-gray-90);
-    box-shadow: 0 0 4px var(--shadow-1);
+    width: 400px;
+    background-color: #eaf8f4;
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
   }
-
-  .todo-list {
-    list-style: none;
-  }
-
-  .actions {
-    position: relative;
+  .add-todo {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--spacing-8) var(--spacing-16);
-    font-size: 0.9rem;
-    border-top: 1px solid var(--color-gray-90);
+    flex-direction: column;
+    gap: 10px;
   }
-
-  .actions:before {
-    content: '';
-    height: 40px;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    box-shadow: 0 1px 1px hsla(0, 0%, 0%, 0.2), 0 8px 0 -3px hsl(0, 0%, 96%),
-      0 9px 1px -3px hsla(0, 0%, 0%, 0.2), 0 16px 0 -6px hsl(0, 0%, 96%),
-      0 17px 2px -6px hsla(0, 0%, 0%, 0.2);
-    z-index: -1;
-  }
-
-  /* Add todo */
-
-  .toggle-all {
-    width: 1px;
-    height: 1px;
-    position: absolute;
-    opacity: 0;
-  }
-
-  .toggle-all + label {
-    position: absolute;
-    font-size: 0;
-  }
-
-  .toggle-all + label:before {
-    content: '❯';
-    display: block;
-    padding: var(--spacing-16);
-    font-size: var(--font-24);
-    color: var(--color-gray-58);
-    transform: rotate(90deg);
-  }
-
-  .toggle-all:checked + label:before {
-    color: var(--color-gray-28);
-  }
-
-  .new-todo {
+  .input-large {
     width: 100%;
-    padding: var(--spacing-16);
-    padding-left: 60px;
-    font-size: var(--font-24);
-    border: none;
-    border-bottom: 1px solid var(--shadow-1);
+    padding: 10px;
+    font-size: 1.1rem;
   }
-
-  /* Todo */
-
-  .todo {
-    font-size: var(--font-24);
-    font-weight: 400;
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .btn {
+    padding: 10px;
+    font-size: 1.1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  .task-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
     border-bottom: 1px solid #ededed;
   }
-
-  .todo:last-child {
-    border-bottom: none;
-  }
-
-  .todo-check,
-  .todo-text {
-    display: block;
-    padding: var(--spacing-16);
-    color: var(--color-gray-28);
-    transition: color 0.4s;
-  }
-
-  .todo-check {
-    border-radius: 100%;
-  }
-
-  .completed {
-    color: var(--color-gray-58);
-    text-decoration: line-through;
-  }
-
-  .todo-item {
-    position: relative;
+  .task-content {
     display: flex;
-    align-items: center;
-    padding: 0 var(--spacing-8);
+    flex-direction: column;
   }
-
-  .editing .todo-item {
-    display: none;
+  .reminder, .deadline {
+    font-size: 0.9em;
+    color: gray;
   }
-
-  .edit {
+  .input-large {
     width: 100%;
-    padding: var(--spacing-8);
-    font-size: var(--font-24);
-    border: 1px solid #999;
-    border-radius: var(--radius-base);
-    box-shadow: inset 0 -1px 5px 0 var(--shadow-1);
+    padding: 10px;
+    font-size: 1.1rem;
   }
-
-  .toggle {
-    position: absolute;
-    top: 26px;
-    left: 13px;
-    transform: scale(2);
-    opacity: 0;
-  }
-
-  .toggle + label {
-    background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23949494%22%20stroke-width%3D%223%22/%3E%3C/svg%3E');
-    background-repeat: no-repeat;
-    background-position: 84% 50%;
-  }
-
-  .toggle:checked + label {
-    background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%2359A193%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20fill%3D%22%233EA390%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22%2F%3E%3C%2Fsvg%3E');
-  }
-
-  .remove {
-    display: none;
-    margin-left: auto;
-    font-size: var(--font-32);
-    color: var(--color-gray-58);
-    transition: color 0.2s ease-out;
-  }
-
-  .remove:hover {
-    color: var(--color-highlight);
-  }
-
-  .remove:after {
-    content: '×';
-  }
-
-  .todo:hover .remove {
-    display: block;
-  }
-
-  /* Filters */
-
-  .filters {
+  .input-group {
     display: flex;
-    gap: var(--spacing-4);
+    flex-direction: column;
+    gap: 5px;
   }
-
-  .filter {
-    text-transform: capitalize;
-    padding: var(--spacing-4) var(--spacing-8);
-    border: 1px solid transparent;
-    border-radius: var(--radius-base);
+  .btn.cancel {
+    background-color: red;
   }
-
-  .filter:hover {
-    border: 1px solid var(--color-highlight);
+  .small {
+    padding: 5px;
+    font-size: 0.8rem;
   }
-
-  .selected {
-    border-color: var(--color-highlight);
-  }
-
-  .filters {
+  .action-buttons {
     display: flex;
-    gap: var(--spacing-4);
+    gap: 5px;
+    justify-content: flex-end;
   }
-
-  .filter {
-    text-transform: capitalize;
-    padding: var(--spacing-4) var(--spacing-8);
-    border: 1px solid transparent;
-    border-radius: var(--radius-base);
+  .checkbox {
+    margin-right: 10px;
   }
-
-  .filter:hover {
-    border: 1px solid var(--color-highlight);
-  }
-
-  .selected {
-    border-color: var(--color-highlight);
-  }
-
-
-
-
-
 </style>
