@@ -173,11 +173,8 @@
     display: flex;
     flex-direction: column;
   }
-  .reminder, .deadline {
-    font-size: 0.9em;
-    color: gray;
-  }
   .expired {
+    font-size: 0.9em;
     color: red;
   }
   .input-large {
