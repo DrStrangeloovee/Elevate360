@@ -96,10 +96,14 @@
               {:else}
                 <span>{todo.text}</span>
                 {#if todo.reminder}
-                  <div class:reminder={isDateExpired(todo.reminder)}>Reminder: {todo.reminder}</div>
+                  <div class:expired={isDateExpired(todo.reminder)}>
+                    Reminder: {new Date(todo.reminder).toLocaleString()}
+                  </div>
                 {/if}
                 {#if todo.deadline}
-                  <div class:deadline={isDateExpired(todo.deadline)}>Deadline: {todo.deadline}</div>
+                  <div class:expired={isDateExpired(todo.deadline)}>
+                    Deadline: {new Date(todo.deadline).toLocaleString()}
+                  </div>
                 {/if}
                 <div class="action-buttons">
                   <input type="checkbox" checked={todo.completed} on:change={() => handleComplete(todo.id)} class="checkbox" />
@@ -172,6 +176,9 @@
   .reminder, .deadline {
     font-size: 0.9em;
     color: gray;
+  }
+  .expired {
+    color: red;
   }
   .input-large {
     width: 100%;
