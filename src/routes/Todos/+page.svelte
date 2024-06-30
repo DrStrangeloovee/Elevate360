@@ -9,7 +9,7 @@
 
     onMount(async () => {
         try {
-            const records = await pb.collection('To_do_list').getFullList(); // Updated collection name
+            const records = await pb.collection('todos').getFullList();
             todos = records.map(record => ({
                 id: record.id,
                 text: record.text,
@@ -24,7 +24,7 @@
 
     async function addTodo(newTodo) {
         try {
-            const record = await pb.collection('To_do_list').create({ // Updated collection name
+            const record = await pb.collection('todos').create({
                 text: newTodo.text,
                 reminder: newTodo.reminder,
                 deadline: newTodo.deadline,
@@ -38,7 +38,7 @@
 
     async function updateTodo(updatedTodo) {
         try {
-            await pb.collection('To_do_list').update(updatedTodo.id, updatedTodo); // Updated collection name
+            await pb.collection('todos').update(updatedTodo.id, updatedTodo);
             todos = todos.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo);
         } catch (error) {
             console.error('Error updating todo:', error);
@@ -47,7 +47,7 @@
 
     async function deleteTodo(id) {
         try {
-            await pb.collection('To_do_list').delete(id); // Updated collection name
+            await pb.collection('todos').delete(id);
             todos = todos.filter(todo => todo.id !== id);
         } catch (error) {
             console.error('Error deleting todo:', error);

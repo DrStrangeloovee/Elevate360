@@ -1,53 +1,49 @@
-import { redirect } from '@sveltejs/kit';
+import PocketBase from 'pocketbase';
 
-export async function load({ locals, url }) {
-    const todoId = url.searchParams.get('id');
+const pb = new PocketBase('http://127.0.0.1:8090'); // Die URL deines PocketBase-Servers
 
-    if (todoId) {
-        try {
-            // Try fetching the requested todo
-            return {
-                todo: await locals.pb.collection('To_do_list').getOne(todoId) // Updated collection name
-            };
-        } catch (error) {
-            console.error('Failed to fetch the todo:', error);
-            // Redirect to new empty todo form
-            throw redirect(307, '/todo/new');
-        }
-    } else {
-        // Redirect to new empty todo form if no ID is provided
-        throw redirect(307, '/todo/new');
-    }
-}
-
-export async function actions({ locals, request }) {
-    const formData = await request.formData();
-    const data = {
-        text: formData.get('text'),
-        reminder: formData.get('reminder'),
-        deadline: formData.get('deadline'),
-        completed: formData.get('completed') === 'on' ? true : false
-    };
-
-    try {
-        const todoId = formData.get('id');
-        let todo;
-        
-        if (todoId) {
-            // Update existing todo
-            todo = await locals.pb.collection('To_do_list').update(todoId, data); // Updated collection name
-        } else {
-            // Create new todo
-            todo = await locals.pb.collection('To_do_list').create(data); // Updated collection name
-        }
-
-        // Redirect to the todo page
-        throw redirect(303, `/todo?id=${todo.id}`);
-    } catch (error) {
-        console.error('Failed to save the todo:', error);
-        return {
-            status: 500,
-            error: 'Failed to save the todo'
+export const actions = {
+    // Laden der To-Do-Daten aus PocketBase
+    load: async ({ params }) => {
+        const records = await pb.collection('todos').getFullList();
+        return { todos: records };
+    },
+    // Hinzufügen eines neuen To-Dos
+    addTodo: async ({ request }) => {
+        const formData = await request.formData();
+        const newTodo = {
+            text: formData.get('text'),
+            reminder: formData.get('reminder'),
+            deadline: formData.get('deadline'),
+            completed: false
         };
+
+        await pb.collection('todos').create(newTodo);
+
+        return { success: true };
+    },
+    // Aktualisieren eines To-Dos
+    updateTodo: async ({ request }) => {
+        const formData = await request.formData();
+        const id = formData.get('id');
+        const updatedTodo = {
+            text: formData.get('text'),
+            reminder: formData.get('reminder'),
+            deadline: formData.get('deadline'),
+            completed: formData.get('completed') === 'true'
+        };
+
+        await pb.collection('todos').update(id, updatedTodo);
+
+        return { success: true };
+    },
+    // Löschen eines To-Dos
+    deleteTodo: async ({ request }) => {
+        const formData = await request.formData();
+        const id = formData.get('id');
+
+        await pb.collection('todos').delete(id);
+
+        return { success: true };
     }
-}
+};
