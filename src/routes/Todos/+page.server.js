@@ -7,7 +7,7 @@ export async function load({ locals, url }) {
         try {
             // Try fetching the requested todo
             return {
-                todo: await locals.pb.collection('todos').getOne(todoId)
+                todo: await locals.pb.collection('To_do_list').getOne(todoId) // Updated collection name
             };
         } catch (error) {
             console.error('Failed to fetch the todo:', error);
@@ -35,10 +35,10 @@ export async function actions({ locals, request }) {
         
         if (todoId) {
             // Update existing todo
-            todo = await locals.pb.collection('todos').update(todoId, data);
+            todo = await locals.pb.collection('To_do_list').update(todoId, data); // Updated collection name
         } else {
             // Create new todo
-            todo = await locals.pb.collection('todos').create(data);
+            todo = await locals.pb.collection('To_do_list').create(data); // Updated collection name
         }
 
         // Redirect to the todo page
