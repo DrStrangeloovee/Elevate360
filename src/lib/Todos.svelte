@@ -58,7 +58,7 @@
   </script>
   
   <main>
-    <h1 class="title">To-do</h1>
+    <h1 class="title">To-do/h1>
   
     <section class="todos">
       <div class="add-todo">
