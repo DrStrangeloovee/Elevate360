@@ -28,3 +28,4 @@
     <NoteList notes={data.notes}></NoteList>
     <!--<EditorJs></EditorJs>-->
 </div>
+
