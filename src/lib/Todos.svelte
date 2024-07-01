@@ -7,7 +7,7 @@
     let editedText = '';
     let newReminder = '';
     let newDeadline = '';
-  
+
     function handleAddTodo() {
         if (newTodo.trim()) {
             todos = [
@@ -19,24 +19,24 @@
             deadline = '';
         }
     }
-  
+
     function handleComplete(todoId) {
         todos = todos.map(todo =>
             todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
         );
     }
-  
+
     function handleRemove(todoId) {
         todos = todos.filter(todo => todo.id !== todoId);
     }
-  
+
     function handleEdit(todoId, text, reminder, deadline) {
         isEditing = todoId;
         editedText = text;
         newReminder = reminder || '';
         newDeadline = deadline || '';
     }
-  
+
     function saveEdit(todoId) {
         todos = todos.map(todo =>
             todo.id === todoId
@@ -45,35 +45,17 @@
         );
         isEditing = null;
     }
-  
+
     function cancelEdit() {
         isEditing = null;
     }
-  
+
     function isDateExpired(dateStr) {
         const currentDate = new Date();
         const targetDate = new Date(dateStr);
         return currentDate > targetDate;
     }
-  
-    function checkExpiredDates() {
-        todos.forEach(todo => {
-            if (todo.reminder && isDateExpired(todo.reminder)) {
-                todo.reminderExpired = true;
-            } else {
-                todo.reminderExpired = false;
-            }
-            if (todo.deadline && isDateExpired(todo.deadline)) {
-                todo.deadlineExpired = true;
-            } else {
-                todo.deadlineExpired = false;
-            }
-        });
-    }
-  
-    // Überprüfung der abgelaufenen Daten alle 30 Sekunden
-    setInterval(checkExpiredDates, 30000);
-  
+
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
             if (newTodo.trim()) {
@@ -81,17 +63,17 @@
             }
         }
     }
-  </script>
-  
-  <main>
+</script>
+
+<main>
     <h1 class="title">To-do</h1>
-  
+
     <section class="todos">
         <div class="add-todo">
             <input type="text" bind:value={newTodo} placeholder="Add a new task..." class="input-large add-task-input" on:keypress={handleKeyPress} />
             <button on:click={handleAddTodo} class="btn add-task-button">Add Task</button>
         </div>
-  
+
         {#if todos.length}
             <ul class="todo-list">
                 {#each todos as todo (todo.id)}
@@ -99,7 +81,7 @@
                         <div class="task-content">
                             <div class="task-text">
                                 <input type="checkbox" checked={todo.completed} on:change={() => handleComplete(todo.id)} class="checkbox" />
-                                <span class={todo.reminderExpired || todo.deadlineExpired ? 'expired-text' : ''}>{todo.text}</span>
+                                <span>{todo.text}</span>
                             </div>
                             {#if isEditing === todo.id}
                                 <input type="text" bind:value={editedText} class="input-large" />
@@ -117,12 +99,12 @@
                                 </div>
                             {:else}
                                 {#if todo.reminder}
-                                    <div class:expired={todo.reminderExpired}>
+                                    <div class:expired={isDateExpired(todo.reminder)}>
                                         Reminder: {new Date(todo.reminder).toLocaleString()}
                                     </div>
                                 {/if}
                                 {#if todo.deadline}
-                                    <div class:expired={todo.deadlineExpired}>
+                                    <div class:expired={isDateExpired(todo.deadline)}>
                                         Deadline: {new Date(todo.deadline).toLocaleString()}
                                     </div>
                                 {/if}
@@ -136,7 +118,7 @@
                     </div>
                 {/each}
             </ul>
-  
+
             <div class="actions">
                 <span class="todo-count">{todos.filter(todo => !todo.completed).length} left</span>
                 <div>
@@ -145,9 +127,9 @@
             </div>
         {/if}
     </section>
-  </main>
-  
-  <style>
+</main>
+
+<style>
     .title {
         font-size: 24px;
         padding: 20px;
@@ -212,9 +194,6 @@
         font-size: 0.9em;
         color: red;
     }
-    .expired-text {
-        color: red;
-    }
     .outlined-btn {
         border: 1px solid #007bff;
         background-color: transparent;
@@ -240,4 +219,4 @@
         border: none;
         cursor: pointer;
     }
-  </style>
+</style>
