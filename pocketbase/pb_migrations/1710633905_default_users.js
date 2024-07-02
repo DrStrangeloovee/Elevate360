@@ -5,8 +5,7 @@ const defaultUsers = [
     { username: "marco", name: "Marco Auenhammer", email: "if23b501@technikum-wien.at" },
     { username: "hagar", name: "Hagar Ahmed", email: "if23b004@technikum-wien.at" },
     { username: "imad", name: "Imad Taher", email: "if22b016@technikum-wien.at" },
-    { username: "nick", name: "Nick Müllner", email: "if23b503@technikum-wien.at" },
-    { username: "demooo", name: "Demo", email: "demo@example.com" },
+    { username: "nick", name: "Nick Müllner", email: "if23b503@technikum-wien.at" }
 ]
 
 migrate((db) => {
@@ -17,11 +16,7 @@ migrate((db) => {
     defaultUsers.forEach(user => {
         const record = new Record(collection)
         record.setUsername(user.username)
-        if (user.username === "demo") {
-            record.setPassword("demo1234")
-        } else {
-            record.setPassword("1234567890")
-        }
+        record.setPassword("1234567890")
         record.set("name", user.name)
         record.set("email", user.email)
         dao.saveRecord(record)

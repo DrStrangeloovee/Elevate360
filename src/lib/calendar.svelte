@@ -1,34 +1,15 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
   import { Calendar } from '@fullcalendar/core';
-  import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
+  import interactionPlugin from '@fullcalendar/interaction';
   import dayGridPlugin from '@fullcalendar/daygrid';
   import timeGridPlugin from '@fullcalendar/timegrid';
 
-  export let events = [];
-
-  let calendar; 
-
-  $: {
-    if (calendar) {
-      calendar.setOption('events', events);
-    }
-  }
+  let events = [];
+  let calendar;
 
   onMount(() => {
-    let containerEl = document.getElementById('external-events');
     let calendarEl = document.getElementById('calendar');
-    let checkbox = document.getElementById('drop-remove');
-
-    new Draggable(containerEl, {
-      itemSelector: '.fc-event',
-      eventData: function(eventEl) {
-        return {
-          title: eventEl.innerText
-        };
-      }
-    });
-
     calendar = new Calendar(calendarEl, {
       plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin],
       headerToolbar: {
@@ -36,87 +17,35 @@
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
-      editable: true,
-      droppable: true,
+      editable: true, // Erlaubt das Verschieben und Ändern der Events per Drag & Drop
+      selectable: true, // Erlaubt das Auswählen eines Zeitbereichs
+      select: handleDateSelect, // Event-Handler für die Auswahl eines Zeitbereichs
       events: events,
-      drop: function(info) {
-        if (checkbox.checked) {
-          info.draggedEl.parentNode.removeChild(info.draggedEl);
-        }
-        const newEvent = {
-          title: info.draggedEl.innerText,
-          start: info.dateStr
-        };
-        calendarEl.dispatchEvent(new CustomEvent('eventDropped', { detail: newEvent }));
-      }
     });
 
     calendar.render();
   });
 
-  
-  onDestroy(() => {
-    if (calendar) {
-      calendar.destroy();
+  // Funktion, um ein neues Event hinzuzufügen
+  function handleDateSelect(info) {
+    let title = prompt('Event Title:');
+    if (title) {
+      let newEvent = {
+        title: title,
+        start: info.startStr,
+        end: info.endStr // Endzeit des Events, falls relevant
+      };
+      events = [...events, newEvent]; // Event zur Liste hinzufügen
+      calendar.addEvent(newEvent); // Event direkt im Kalender hinzufügen
     }
-  });
+  }
 </script>
 
-
 <style>
-  #external-events {
-    position: fixed;
-    z-index: 2;
-    top: 20px;
-    left: 20px;
-    width: 150px;
-    padding: 0 10px;
-    border: 1px solid #ccc;
-    background: #eee;
-  }
-
-  #external-events .fc-event {
-    cursor: move;
-    margin: 3px 0;
-  }
-
-  #calendar-container {
-    position: relative;
-    z-index: 1;
-    margin-left: 200px;
-  }
-
   #calendar {
     max-width: 1100px;
     margin: 20px auto;
   }
 </style>
 
-<div id="external-events">
-  <p>
-    <strong>Draggable Events</strong>
-  </p>
-  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-    <div class="fc-event-main">My Event 1</div>
-  </div>
-  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-    <div class="fc-event-main">My Event 2</div>
-  </div>
-  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-    <div class="fc-event-main">My Event 3</div>
-  </div>
-  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-    <div class="fc-event-main">My Event 4</div>
-  </div>
-  <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-    <div class="fc-event-main">My Event 5</div>
-  </div>
-  <p>
-    <input type="checkbox" id="drop-remove" />
-    <label for="drop-remove">remove after drop</label>
-  </p>
-</div>
-
-<div id="calendar-container">
-  <div id="calendar"></div>
-</div>
+<div id="calendar"></div>
